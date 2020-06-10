@@ -1,13 +1,18 @@
 <template>
-    <div>
-        Home
-    </div>
+  <div class="Home">
+    <Nav />
+    <router-view></router-view>
+  </div>
 </template>
 <script>
+import Nav from "@/components/Nav/nav";
 export default {
-    name:"Home"
-}
+  data() {
+    return {};
+  },
+  components: {
+    Nav,
+  },
+};
 </script>
-<style scoped>
-
-</style>
+<style lang="less" scoped></style>
