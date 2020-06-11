@@ -5,7 +5,7 @@ import Query from "@/views/Query_commodity/Query.vue";
 import Login from "@/views/Login/Login.vue";
 import Specifications from "@/views/Specifications/Specifications.vue";
 import Contents from "@/views/content_classification/contents.vue";
-
+import store from "../store/index";
 Vue.use(VueRouter);
 
 const routes = [
@@ -22,6 +22,7 @@ const routes = [
         path: "/query",
         name: "Query",
         component: Query,
+        // meta: { isLogin: true },
       },
       // 规格参数
       {
@@ -47,6 +48,26 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+});
+
+// 导航守卫
+router.beforeEach((to, from, next) => {
+  if (
+    to.fullPath.indexOf("/query") === 0 ||
+    to.fullPath.indexOf("/specifications") === 0 ||
+    to.fullPath.indexOf("/contents") === 0
+  ) {
+    // 读取本地的消化比较大，所以选择读取vuex的
+    // let token = sessionStorage.getItem("token");
+    let token = store.state.userinfo.token;
+    if (token) {
+      next();
+    } else {
+      next({ name: "Login" });
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

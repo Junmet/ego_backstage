@@ -2,18 +2,30 @@
   <div class="login">
     <div class="Center">
       <img src="../../assets/logo.png" alt="logo" class="Icon1" />
-      <el-form class="demo-ruleForm" :rules="rules">
+      <el-form
+        :model="loginForm"
+        class="demo-ruleForm"
+        ref="loginForm"
+        :rules="rules"
+      >
         <!-- 用户名 -->
-        <el-form-item prop="name">
-          <el-input placeholder="请输入用户名" v-model="name"></el-input>
+        <el-form-item prop="username">
+          <el-input
+            placeholder="请输入用户名"
+            v-model="loginForm.username"
+          ></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
-          <el-input placeholder="请输入密码"></el-input>
+          <el-input
+            type="password"
+            placeholder="请输入密码"
+            v-model="loginForm.password"
+          ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">登录</el-button>
-          <el-button>清空</el-button>
+          <el-button type="primary" @click="login">登录</el-button>
+          <el-button @click="empty">清空</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -21,23 +33,58 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "login",
   data() {
     return {
-      name: "",
-      password: "",
+      loginForm: {
+        username: "junmet",
+        password: "123",
+      },
+
       rules: {
-        name: [
+        username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" },
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 16, message: "请输入6~16位密码", trigger: "blur" },
+          { min: 1, max: 16, message: "请输入1~16位密码", trigger: "blur" },
         ],
       },
     };
+  },
+  methods: {
+    ...mapActions(["setUserInfoActions"]),
+    // 登录
+    login() {
+      this.$refs.loginForm.validate(async (valid) => {
+        if (valid) {
+          const res = await this.$api.getLogin(this.loginForm);
+          this.setUserInfoActions({
+            username: res.data.username,
+            token: res.data.token,
+          });
+
+          // 解决Vuex数据刷新丢失
+          // window.addEventListener("beforeunload", () => {
+          //   sessionStorage.setItem("store", JSON.stringify(this.$store.state));
+          // });
+
+          sessionStorage.setItem("token", res.data.token);
+          sessionStorage.setItem("username", res.data.username);
+          this.$router.replace({ path: "home" });
+          this.$message.success(res.data.msg + "，欢迎来到Ego商城后台系统");
+        } else {
+          this.$message.error("登录失败，请确认用户名，密码！！！");
+        }
+      });
+    },
+    // 清空
+    empty() {
+      this.loginForm.username = "";
+      this.loginForm.password = "";
+    },
   },
 };
 </script>

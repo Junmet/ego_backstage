@@ -1,3 +1,7 @@
+/**
+ * 封装axios
+ */
+
 import axios from "axios";
 import qs from "querystring";
 
@@ -23,49 +27,39 @@ const errorHandle = (status, other) => {
   }
 };
 
-// 创建一个实例
-const axios = axios.create({
+const instance = axios.create({
   timeout: 5000,
 });
 
-axios.defaults.baseURL = "";
-// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-axios.defaults.headers.post["Content-Type"] =
+/**
+ * token:登陆 令牌
+ */
+
+instance.defaults.baseURL = "/api";
+instance.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 
+// 拦截器
 // 添加请求拦截器
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   (config) => {
-    console.log(config);
-
-    // 在发送请求之前做些什么
     if (config.method === "post") {
-      config.data = qs.stringify(config, data);
+      config.data = qs.stringify(config.data);
     }
     return config;
   },
-  (error) => {
-    // 对请求错误做些什么
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // 添加响应拦截器
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   // 成功
-  (response) => {
-    console.log(response);
-    // 对响应数据做点什么
-    if (response.status === 200) {
-      Promise.resolve(response);
-    } else {
-      Promise.reject(response);
-    }
-    return response;
-  },
-  //失败
+  (response) =>
+    response.status === 200
+      ? Promise.resolve(response)
+      : Promise.reject(response),
+  // 失败
   (error) => {
-    // 对响应错误做点什么
     const { response } = error;
     if (response) {
       errorHandle(response.status, response.data);
@@ -76,5 +70,6 @@ axios.interceptors.response.use(
     }
   }
 );
-// 暴露
-export default axios;
+
+// 导出
+export default instance;
