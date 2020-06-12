@@ -4,8 +4,13 @@ const api = {
   getLogin(data) {
     return axios({
       method: "post",
-      url: "/login",
+      url: "/api/login",
       data,
+    });
+  },
+  getSelect() {
+    return axios({
+      url: "http://iwenwiki.com/api/blueberrypai/getIndexInteresting.php",
     });
   },
 };

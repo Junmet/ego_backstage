@@ -1,4 +1,5 @@
 module.exports = {
+  // productionSourceMap: true,
   // 配置跨域
   devServer: {
     port: 8080,

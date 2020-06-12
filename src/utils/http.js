@@ -35,7 +35,7 @@ const instance = axios.create({
  * token:登陆 令牌
  */
 
-instance.defaults.baseURL = "/api";
+instance.defaults.baseURL = "";
 instance.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 

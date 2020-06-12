@@ -24,9 +24,7 @@
         <el-dropdown>
           <span> <i class="el-icon-user"></i>个人中心</span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              {{ $store.state.userinfo.username }}</el-dropdown-item
-            >
+            <el-dropdown-item> {{ userinfo.username }}</el-dropdown-item>
             <el-dropdown-item>
               <div @click="signout">退出</div>
             </el-dropdown-item>
@@ -37,23 +35,14 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {};
   },
-  // created() {
-  //   // 解决Vuex数据刷新丢失
-  //   if (sessionStorage.getItem("store")) {
-  //     // 替换vuex的state数据
-  //     this.$store.replaceState(
-  //       Object.assign(
-  //         {},
-  //         this.$store.state,
-  //         JSON.parse(sessionStorage.getItem("store"))
-  //       )
-  //     );
-  //   }
-  // },
+  computed: {
+    ...mapState(["userinfo"]),
+  },
   methods: {
     signout() {
       sessionStorage.clear();
